@@ -22,6 +22,12 @@
     });
   }
 
+  if (D.naikHargaPasar > 0) {
+    D.produk.forEach(function (p) {
+      if (!p.pasar && p.ecer) p.pasar = Math.ceil(p.ecer * (1 + D.naikHargaPasar / 100) / 1000) * 1000;
+    });
+  }
+
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var rp = function (n) { return "Rp" + Number(n).toLocaleString("id-ID"); };

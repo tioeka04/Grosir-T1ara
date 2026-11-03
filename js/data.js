@@ -31,6 +31,10 @@ window.TIARA = {
   // Harga grosir berlaku otomatis mulai jumlah ini (total semua model).
   minGrosir: 6,
 
+  // Produk tanpa harga pasaran diberi harga pasaran = harga eceran + persen ini,
+  // dibulatkan ke atas per Rp1.000. Isi 0 untuk mematikan.
+  naikHargaPasar: 60,
+
   // Tampil di beranda hanya kalau sudah diisi. Contoh:
   // { nama: "Bu Rina", kota: "Bandung", isi: "Barangnya sama, harganya jauh lebih murah." }
   testimoni: [],
