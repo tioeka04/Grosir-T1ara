@@ -157,17 +157,35 @@
 
   /* ---------- WhatsApp dan TikTok ---------- */
 
-  function linkWa(pesan) {
+  var NOMOR_WA = [].concat(D.toko.whatsapp || []).filter(Boolean);
+
+  /* Pengunjung dibagi rata ke para admin, dan tetap ke admin yang sama di kunjungan berikutnya */
+  var adminPengunjung = (function () {
+    var i;
+    try {
+      var tersimpan = localStorage.getItem("tiara-admin");
+      if (tersimpan !== null) i = Number(tersimpan);
+    } catch (e) { /* tanpa penyimpanan */ }
+    if (!(i >= 0 && i < NOMOR_WA.length)) {
+      i = Math.floor(Math.random() * NOMOR_WA.length);
+      try { localStorage.setItem("tiara-admin", i); } catch (e) { /* tanpa penyimpanan */ }
+    }
+    return i;
+  })();
+
+  function linkWa(pesan, admin) {
     var teks = encodeURIComponent(pesan);
-    return D.toko.whatsapp
-      ? "https://wa.me/" + D.toko.whatsapp + "?text=" + teks
+    var nomor = NOMOR_WA[admin != null ? admin : adminPengunjung];
+    return nomor
+      ? "https://wa.me/" + nomor + "?text=" + teks
       : "https://wa.me/?text=" + teks;
   }
   var PESAN_UMUM = "Halo " + D.toko.nama + ", saya mau tanya produknya.";
 
   function ikatTautan() {
     $$("[data-wa]").forEach(function (a) {
-      a.href = linkWa(a.getAttribute("data-wa-pesan") || PESAN_UMUM);
+      var admin = a.getAttribute("data-wa-admin");
+      a.href = linkWa(a.getAttribute("data-wa-pesan") || PESAN_UMUM, admin === null ? null : Number(admin));
       a.target = "_blank";
       a.rel = "noopener";
     });
@@ -212,7 +230,11 @@
       t.alamat && "<li>" + esc(t.alamat) + "</li>",
       t.jamBuka && "<li>" + esc(t.jamBuka) + "</li>",
       t.email && '<li><a href="mailto:' + esc(t.email) + '">' + esc(t.email) + "</a></li>",
-      '<li><a data-wa href="#">WhatsApp</a></li>',
+      NOMOR_WA.length > 1
+        ? NOMOR_WA.map(function (n, i) {
+          return '<li><a data-wa data-wa-admin="' + i + '" href="#">WhatsApp Admin ' + (i + 1) + ": 0" + esc(n.slice(2)) + "</a></li>";
+        }).join("")
+        : '<li><a data-wa href="#">WhatsApp</a></li>',
       t.tiktok && '<li><a data-tiktok href="#">TikTok</a></li>',
       t.instagram && '<li><a href="' + esc(t.instagram) + '" target="_blank" rel="noopener">Instagram</a></li>'
     ].filter(Boolean).join("");

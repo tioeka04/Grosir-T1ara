@@ -18,8 +18,9 @@ window.TIARA = {
 
   toko: {
     nama: "Grosir Tiara",
-    whatsapp: "",        // contoh format: "628xxxxxxxxxx"
-    tiktok: "",          // link toko TikTok, misal "https://www.tiktok.com/@namatoko"
+    // Nomor admin, format 62xxx. Tiap pengunjung otomatis diarahkan ke salah satu admin.
+    whatsapp: ["6282312386138", "6281224672430"],
+    tiktok: "https://www.tiktok.com/@tiarafashion31",
     linkProdukTiktok: "https://www.tiktok.com/view/product/{id}", // link tiap produk hasil sync
     instagram: "",
     email: "",
