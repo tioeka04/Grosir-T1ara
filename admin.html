@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin | Grosir Tiara</title>
+  <meta name="theme-color" content="#64242F">
+  <link rel="icon" href="img/ikon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin">
+
+  <!-- Layar masuk -->
+  <main class="masuk" id="layar-masuk">
+    <form class="kartu-masuk" id="form-masuk">
+      <div class="logo-admin" aria-hidden="true"></div>
+      <h1>Masuk Admin</h1>
+      <p class="lembut">Kelola produk, harga, dan isi website Grosir Tiara.</p>
+      <label class="isian">
+        <span>Kunci akses GitHub</span>
+        <input class="kolom" id="token" type="password" autocomplete="current-password" placeholder="github_pat_..." required>
+      </label>
+      <label class="centang"><input type="checkbox" id="ingat" checked> Ingat di perangkat ini</label>
+      <p class="galat" id="galat-masuk" role="alert" hidden></p>
+      <button class="btn btn-bata" type="submit" id="tombol-masuk">Masuk</button>
+      <details class="bantuan">
+        <summary>Belum punya kunci akses?</summary>
+        <ol>
+          <li>Buka <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">pembuatan token GitHub</a>.</li>
+          <li>Isi nama bebas, lalu pilih masa berlaku.</li>
+          <li>Di <b>Repository access</b>, pilih <b>Only select repositories</b> lalu pilih repository website ini.</li>
+          <li>Di <b>Permissions</b>, beri <b>Contents: Read and write</b> dan <b>Actions: Read and write</b>.</li>
+          <li>Klik <b>Generate token</b>, salin, lalu tempel di sini.</li>
+        </ol>
+        <p class="lembut">Kunci ini hanya disimpan di browser perangkat ini. Jangan bagikan ke siapa pun.</p>
+      </details>
+    </form>
+  </main>
+
+  <!-- Layar admin -->
+  <div id="layar-admin" hidden>
+    <header class="admin-kepala">
+      <div class="admin-isi admin-kepala-isi">
+        <a class="logo" href="index.html" target="_blank" rel="noopener">
+          <span class="logo-admin kecil" aria-hidden="true"></span>
+          <span class="logo-kata"><small>Admin</small><b>Tiara</b></span>
+        </a>
+        <a class="tautan-kecil" href="index.html" target="_blank" rel="noopener">Lihat website</a>
+        <button class="tautan-kecil" type="button" id="keluar">Keluar</button>
+      </div>
+      <nav class="admin-isi tab-admin" aria-label="Menu admin">
+        <button type="button" data-tab="produk" aria-current="page">Produk</button>
+        <button type="button" data-tab="kategori">Kategori</button>
+        <button type="button" data-tab="toko">Toko</button>
+        <button type="button" data-tab="testimoni">Testimoni</button>
+        <button type="button" data-tab="sinkron">Sinkron TikTok</button>
+      </nav>
+    </header>
+
+    <main class="admin-isi admin-badan">
+      <p class="memuat" id="memuat">Memuat data...</p>
+      <section id="panel-produk" data-panel="produk" hidden></section>
+      <section id="panel-kategori" data-panel="kategori" hidden></section>
+      <section id="panel-toko" data-panel="toko" hidden></section>
+      <section id="panel-testimoni" data-panel="testimoni" hidden></section>
+      <section id="panel-sinkron" data-panel="sinkron" hidden></section>
+    </main>
+
+    <div class="bar-simpan" id="bar-simpan" hidden>
+      <div class="admin-isi bar-simpan-isi">
+        <span id="info-simpan">Ada perubahan yang belum disimpan</span>
+        <button class="btn btn-garis" type="button" id="batal">Batalkan</button>
+        <button class="btn btn-salem" type="button" id="simpan">Simpan &amp; terbitkan</button>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="dialog-edit" id="dialog-edit" aria-labelledby="judul-edit"></dialog>
+  <div class="notif" id="notif" role="status"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

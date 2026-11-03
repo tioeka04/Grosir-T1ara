@@ -4,9 +4,6 @@ on:
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
-  push:
-    paths:
-      - tiktok/harga.csv
 
 concurrency:
   group: sync-tiktok
@@ -54,7 +51,7 @@ jobs:
 
       - name: Terbitkan perubahan
         run: |
-          git add js/produk-tiktok.js tiktok/harga.csv
+          git add js/produk-tiktok.js
           if git diff --cached --quiet; then
             echo "Tidak ada perubahan."
             exit 0

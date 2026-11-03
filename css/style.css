@@ -58,6 +58,9 @@ h3 { font-weight: 800; line-height: 1.25; }
 .btn-salem { background: var(--salem); color: var(--marun); }
 .btn-garis { border-color: currentColor; background: transparent; }
 
+/* Pengumuman dari admin */
+.pengumuman { background: var(--marun); color: var(--putih); font-size: .88rem; font-weight: 700; text-align: center; padding: 8px var(--gutter); }
+
 /* Catatan data contoh */
 .catatan-contoh { background: var(--abu); color: var(--marun); font-size: .82rem; font-weight: 700; text-align: center; padding: 7px var(--gutter); }
 

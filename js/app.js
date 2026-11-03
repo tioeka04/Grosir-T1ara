@@ -2,25 +2,48 @@
   "use strict";
 
   var D = window.TIARA;
-
-  /* Data hasil sync TikTok menggantikan produk contoh */
+  var ATUR = window.TIARA_ATUR || {};
   var SYNC = window.TIARA_SYNC;
+
+  /* Pengaturan dari halaman admin (js/pengaturan.js) menimpa nilai bawaan di data.js */
+  ["minGrosir", "naikHargaPasar", "modeContoh", "pengumuman"].forEach(function (k) {
+    if (ATUR[k] !== undefined) D[k] = ATUR[k];
+  });
+  if (ATUR.toko) Object.keys(ATUR.toko).forEach(function (k) { D.toko[k] = ATUR.toko[k]; });
+  if (ATUR.kategori && ATUR.kategori.length) D.kategori = ATUR.kategori;
+  if (ATUR.testimoni) D.testimoni = ATUR.testimoni;
+
+  /* Produk: hasil sync TikTok (atau contoh), ditambah produk manual, lalu diubah sesuai admin */
   if (SYNC && SYNC.produk && SYNC.produk.length) {
     D.produk = SYNC.produk;
     D.modeContoh = false;
     D.produk.forEach(function (p) {
       if (!p.tiktok && D.toko.linkProdukTiktok) p.tiktok = D.toko.linkProdukTiktok.replace("{id}", p.id);
     });
-    if (D.produk.some(function (p) { return !D.kategori.some(function (k) { return k.id === p.kategori; }); })) {
-      D.kategori = D.kategori.concat({ id: "lainnya", nama: "Lainnya", deskripsi: "Produk pilihan lainnya", art: "tunik", warna: "abu", motif: "polos" });
-      D.produk.forEach(function (p) {
-        if (!D.kategori.some(function (k) { return k.id === p.kategori; })) p.kategori = "lainnya";
-      });
-    }
-    D.kategori = D.kategori.filter(function (k) {
-      return D.produk.some(function (p) { return p.kategori === k.id; });
+  } else if (!D.modeContoh) {
+    D.produk = [];
+  }
+  D.produk = D.produk.concat(ATUR.produkManual || []);
+  var UBAH = ATUR.produk || {};
+  D.produk = D.produk.map(function (p) {
+    var u = UBAH[p.id];
+    if (!u) return p;
+    var q = Object.assign({}, p);
+    Object.keys(u).forEach(function (k) {
+      if (u[k] !== null && u[k] !== "") q[k] = u[k];
+    });
+    return q;
+  }).filter(function (p) { return p.tampil !== false; });
+
+  if (D.produk.some(function (p) { return !D.kategori.some(function (k) { return k.id === p.kategori; }); })) {
+    D.kategori = D.kategori.concat({ id: "lainnya", nama: "Lainnya", deskripsi: "Produk pilihan lainnya", art: "tunik", warna: "abu", motif: "polos" });
+    D.produk.forEach(function (p) {
+      if (!D.kategori.some(function (k) { return k.id === p.kategori; })) p.kategori = "lainnya";
     });
   }
+  D.kategori = D.kategori.filter(function (k) {
+    return D.produk.some(function (p) { return p.kategori === k.id; });
+  });
 
   if (D.naikHargaPasar > 0) {
     D.produk.forEach(function (p) {
@@ -151,10 +174,10 @@
   function gambarProduk(p, warna) {
     var foto = (warna && p.fotoWarna && p.fotoWarna[warna]) || p.foto;
     if (foto) return '<img src="' + esc(foto) + '" alt="' + esc(p.nama) + '" loading="lazy" referrerpolicy="no-referrer">';
-    return garmen(artKategori(p), warna || p.warna[0], p.motif);
+    return garmen(artKategori(p), warna || (p.warna || [])[0], p.motif);
   }
   function latarProduk(p, warna) {
-    return p.foto ? "var(--abu-muda)" : warnaDari(warna || p.warna[0]).latar;
+    return p.foto ? "var(--abu-muda)" : warnaDari(warna || (p.warna || [])[0]).latar;
   }
   /* Foto yang gagal dimuat disembunyikan supaya tidak tampil ikon rusak */
   document.addEventListener("error", function (e) {
@@ -219,6 +242,7 @@
     var t = D.toko;
 
     $("#kepala").innerHTML =
+      (D.pengumuman ? '<p class="pengumuman">' + esc(D.pengumuman) + "</p>" : "") +
       (D.modeContoh ? '<p class="catatan-contoh">Tampilan contoh: foto, harga, dan produk belum final.</p>' : "") +
       '<header class="header"><div class="isi header-isi">' +
       '<a class="logo" href="index.html" aria-label="' + esc(t.nama) + ', ke beranda">' + LOGO +
@@ -506,7 +530,7 @@
     var termurah = Math.min.apply(null, D.produk.map(hargaTerendah));
     var hematMaks = berharga.length ? Math.max.apply(null, berharga.map(function (p) { return Math.round((1 - p.grosir / p.pasar) * 100); })) : 0;
     $("#pita").innerHTML = [
-      [rp(termurah), "harga mulai dari"],
+      D.produk.length ? [rp(termurah), "harga mulai dari"] : ["Eceran", "dan grosir"],
       hematMaks ? [hematMaks + "%", "hemat hingga, dibanding pasaran"] : [D.produk.length + " produk", "siap dipesan sekarang"],
       ["1 pcs", "eceran boleh, tanpa minimal"],
       [D.minGrosir + " pcs", "sudah dapat harga grosir"]

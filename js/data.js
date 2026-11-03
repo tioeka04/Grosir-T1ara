@@ -1,5 +1,8 @@
 /* =====================================================================
-   DATA GROSIR TIARA — semua isi website diubah dari file ini saja.
+   NILAI BAWAAN GROSIR TIARA.
+   Toko, kategori, harga, dan produk sekarang diatur lewat admin.html
+   (tersimpan di js/pengaturan.js), yang menimpa nilai di file ini.
+   File ini tetap dipakai untuk produk contoh dan cadangan.
 
    Sebelum online:
    1. Isi toko.whatsapp (format 628xxx) dan toko.tiktok.

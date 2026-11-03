@@ -4,7 +4,7 @@ Setelah terpasang, setiap 6 jam GitHub mengambil produk aktif dari TikTok Shop l
 
 **Yang ikut berubah otomatis:** nama, foto, harga eceran, warna, ukuran, deskripsi, stok, produk baru, dan produk yang dinonaktifkan.
 
-**Yang diisi manual:** harga pasaran dan harga grosir, karena TikTok tidak menyimpan keduanya. Isinya ada di `tiktok/harga.csv`.
+**Yang diatur sendiri lewat halaman admin:** produk mana yang tampil, harga grosir, produk unggulan, kategori, dan isi website lainnya. Harga pasaran dihitung otomatis dari harga eceran.
 
 > **Jangan pernah mengunggah `tiktok/.rahasia.json` ke GitHub**, dan jangan membagikan App Secret ke siapa pun. File itu baru muncul di langkah 3, jadi selesaikan langkah 1 dulu.
 
@@ -67,25 +67,32 @@ Kalau berhasil, muncul tulisan `Website diperbarui: N produk`. Periksa `js/produ
 
 3. Buka tab **Actions**, pilih **Sync produk TikTok**, lalu tekan **Run workflow**.
 
-Kalau hasilnya centang hijau, sync sudah aktif. Setelah itu website dan `tiktok/harga.csv` akan terisi sendiri.
+Kalau hasilnya centang hijau, sync sudah aktif dan produk TikTok langsung tampil di website.
 
-## 5. Mengisi harga
+## 5. Mengatur produk lewat halaman admin
 
-Setiap produk baru otomatis masuk ke `tiktok/harga.csv`. Ubah file ini lewat ikon pensil di GitHub, atau buka di Excel lalu unggah lagi. Perubahan tampil di website beberapa menit kemudian.
+Buka `admin.html` di alamat website, misalnya `https://tioeka04.github.io/Grosir-T1ara/admin.html`.
 
-| Kolom | Isi |
+**Masuk pertama kali.** Halaman admin memakai kunci akses GitHub, bukan password biasa.
+
+1. Buka [pembuatan token GitHub](https://github.com/settings/personal-access-tokens/new).
+2. Di **Repository access**, pilih **Only select repositories**, lalu pilih repository website ini.
+3. Di **Permissions**, beri **Contents: Read and write** dan **Actions: Read and write**.
+4. Klik **Generate token**, salin, lalu tempel di halaman admin.
+
+Kunci hanya tersimpan di browser perangkat itu. Hapus centang **Ingat di perangkat ini** kalau memakai komputer orang lain, dan tekan **Keluar** setelah selesai.
+
+**Yang bisa diatur:**
+
+| Menu | Isi |
 |---|---|
-| `id`, `nama` | Terisi otomatis, `id` jangan diubah |
-| `pasar` | Harga pasaran |
-| `grosir` | Harga grosir per pcs |
-| `ecer` | Opsional, kalau harga di website ingin beda dari TikTok |
-| `kategori` | Opsional: `gamis`, `kebaya`, `tunik`, `atasan`, atau `lainnya`. Kosong berarti ditebak dari nama produk |
-| `bahan` | Opsional, kalau kosong memakai data TikTok |
-| `unggulan` | Isi `ya` supaya tampil di beranda |
+| Produk | Pilih produk yang tampil, jadikan unggulan di beranda, isi harga grosir, ganti harga, kategori, bahan, atau foto. Bisa juga menambah produk yang tidak ada di TikTok |
+| Kategori | Ganti nama, urutan, ilustrasi, dan warna kategori, atau tambah kategori baru |
+| Toko | Pengumuman di bagian atas website, nomor WhatsApp admin, minimal grosir, persen harga pasaran otomatis, dan kontak |
+| Testimoni | Tambah atau hapus testimoni pelanggan |
+| Sinkron TikTok | Lihat kapan terakhir sync, riwayatnya, dan jalankan sync saat itu juga |
 
-Produk yang kolom `pasar` atau `grosir`-nya kosong tetap tampil, hanya tanpa perbandingan harga atau tanpa harga grosir.
-
-Untuk menambah kategori baru, tambahkan dulu di `js/data.js`, lalu pakai `id`-nya di kolom `kategori`.
+Setiap perubahan baru tampil di website setelah tombol **Simpan & terbitkan** ditekan, lalu tunggu 1-2 menit. Data dari TikTok tidak pernah ditimpa. Yang disimpan hanya pilihanmu, jadi kolom yang dikosongkan kembali memakai data TikTok.
 
 ## Kalau ada masalah
 
@@ -98,5 +105,7 @@ Kalau sync gagal, website tetap memakai data terakhir dan GitHub mengirim email.
 | TikTok menolak, kode izin atau scope | Izin Product Basic belum aktif | Periksa aplikasi di Partner Center |
 | Sync berhenti tanpa error | GitHub mematikan jadwal setelah 60 hari repository tidak ada aktivitas | Tab Actions, lalu aktifkan lagi |
 | Link "Lihat di TikTok Shop" salah | Format link berbeda | Ubah `linkProdukTiktok` di `js/data.js` |
+| Halaman admin menolak kunci | Kunci kedaluwarsa atau izinnya kurang | Buat kunci baru dengan izin Contents dan Actions |
+| Simpan gagal, "diubah dari perangkat lain" | Ada yang menyimpan dari perangkat lain | Muat ulang halaman admin, lalu ulangi perubahan |
 
-Selain terjadwal, sync bisa dijalankan kapan saja lewat tombol **Run workflow**.
+Selain terjadwal, sync bisa dijalankan kapan saja lewat tombol **Sinkronkan sekarang** di halaman admin.

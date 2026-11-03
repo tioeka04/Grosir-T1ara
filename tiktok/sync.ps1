@@ -1,20 +1,11 @@
-# Mengambil produk aktif dari TikTok Shop, menggabungkannya dengan tiktok\harga.csv,
-# lalu menulis js\produk-tiktok.js. Kalau gagal, data lama di website tidak disentuh.
+# Mengambil produk aktif dari TikTok Shop lalu menulis js/produk-tiktok.js.
+# Harga pasaran, grosir, dan produk yang tampil diatur lewat admin.html.
+# Kalau gagal, data lama di website tidak disentuh.
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'lib.ps1')
 
-$FileCsv = Join-Path $PSScriptRoot 'harga.csv'
-$FileData = Join-Path (Split-Path -Parent $PSScriptRoot) 'js\produk-tiktok.js'
-if (-not $IsWindows -and $PSVersionTable.PSVersion.Major -ge 6) { $FileData = Join-Path (Split-Path -Parent $PSScriptRoot) 'js/produk-tiktok.js' }
-$KolomCsv = 'id', 'nama', 'pasar', 'grosir', 'ecer', 'kategori', 'bahan', 'unggulan'
-$Utf8Bom = New-Object Text.UTF8Encoding($true)
+$FileData = Join-Path (Join-Path (Split-Path -Parent $PSScriptRoot) 'js') 'produk-tiktok.js'
 $Utf8 = New-Object Text.UTF8Encoding($false)
-
-function Get-Angka($nilai) {
-  $d = ([string]$nilai) -replace '[^\d]', ''
-  if ($d) { return [long]$d }
-  return $null
-}
 
 function Get-Rupiah($nilai) {
   if ($null -eq $nilai -or "$nilai" -eq '') { return $null }
@@ -87,23 +78,8 @@ do {
 Write-Output "Produk aktif: $($daftarId.Count)"
 if ($daftarId.Count -eq 0) { throw 'TikTok mengembalikan 0 produk aktif. Data website dibiarkan apa adanya.' }
 
-# ---------- Harga manual ----------
-$csv = @{}
-$urutanCsv = New-Object Collections.ArrayList
-if (Test-Path $FileCsv) {
-  $baris = @(Get-Content $FileCsv -Encoding UTF8)
-  if ($baris.Count -gt 1) {
-    $pemisah = if ($baris[0] -match ';') { ';' } else { ',' }
-    foreach ($row in ($baris | ConvertFrom-Csv -Delimiter $pemisah)) {
-      if ($row.id) { $csv[$row.id] = $row; [void]$urutanCsv.Add($row.id) }
-    }
-  }
-}
-
 # ---------- Detail tiap produk ----------
 $produk = New-Object Collections.ArrayList
-$baru = 0
-$tanpaHarga = 0
 foreach ($id in $daftarId) {
   $p = Invoke-TikTok 'GET' "/product/202309/products/$id" -Sesi $sesi
   Start-Sleep -Milliseconds 150
@@ -133,34 +109,20 @@ foreach ($id in $daftarId) {
   $foto = ''
   if ($p.main_images) { $foto = @(@($p.main_images)[0].urls)[0] }
 
-  $kunci = "TT$id"
-  if (-not $csv.ContainsKey($kunci)) {
-    $csv[$kunci] = [pscustomobject]@{ id = $kunci; nama = $p.title; pasar = ''; grosir = ''; ecer = ''; kategori = ''; bahan = ''; unggulan = '' }
-    [void]$urutanCsv.Add($kunci)
-    $baru++
-  }
-  $m = $csv[$kunci]
-  $pasar = Get-Angka $m.pasar
-  $grosir = Get-Angka $m.grosir
-  if ($null -eq $pasar -or $null -eq $grosir) { $tanpaHarga++ }
-  $ecer = Get-Angka $m.ecer
-  if ($null -eq $ecer) { $ecer = ($harga | Measure-Object -Minimum).Minimum }
-
   [void]$produk.Add([ordered]@{
       id        = [string]$id
       nama      = [string]$p.title
-      kategori  = $(if ($m.kategori) { $m.kategori.Trim().ToLower() } else { Get-KategoriDariNama $p.title })
-      bahan     = $(if ($m.bahan) { $m.bahan.Trim() } else { $bahan })
-      pasar     = $pasar
-      ecer      = [long]$ecer
-      grosir    = $grosir
+      kategori  = (Get-KategoriDariNama $p.title)
+      bahan     = $bahan
+      pasar     = $null
+      ecer      = [long](($harga | Measure-Object -Minimum).Minimum)
+      grosir    = $null
       warna     = (Get-Unik $warna)
       ukuran    = (Get-Unik $ukuran)
       foto      = [string]$foto
       fotoWarna = $fotoWarna
       deskripsi = (Get-TeksBersih $p.description)
       stok      = $stok
-      unggulan  = ($m.unggulan -match '(?i)^\s*(ya|y|yes|1)\s*$')
     })
 }
 if ($produk.Count -eq 0) { throw 'Tidak ada produk yang bisa dipakai. Data website dibiarkan apa adanya.' }
@@ -177,19 +139,3 @@ if ($lama.Count -ge 2 -and $lama[1] -ceq $jsonProduk) {
   [IO.File]::WriteAllText($FileData, $isi, $Utf8)
   Write-Output "Website diperbarui: $($produk.Count) produk."
 }
-
-if ($baru -gt 0) {
-  $sb = New-Object Text.StringBuilder
-  [void]$sb.Append(($KolomCsv -join ';') + "`r`n")
-  foreach ($k in $urutanCsv) {
-    $r = $csv[$k]
-    $sel = $KolomCsv | ForEach-Object {
-      $v = [string]$r.$_
-      if ($v -match '[;"\r\n]') { '"' + ($v -replace '"', '""') + '"' } else { $v }
-    }
-    [void]$sb.Append(($sel -join ';') + "`r`n")
-  }
-  [IO.File]::WriteAllText($FileCsv, $sb.ToString(), $Utf8Bom)
-  Write-Output "$baru produk baru ditambahkan ke tiktok\harga.csv."
-}
-if ($tanpaHarga -gt 0) { Write-Output "Catatan: $tanpaHarga produk belum punya harga pasaran atau grosir di harga.csv." }
