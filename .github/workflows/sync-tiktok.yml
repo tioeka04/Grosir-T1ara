@@ -1,0 +1,65 @@
+name: Sync produk TikTok
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+  push:
+    paths:
+      - tiktok/harga.csv
+
+concurrency:
+  group: sync-tiktok
+
+jobs:
+  # Selama kunci TikTok belum dipasang, sync dilewati tanpa error.
+  cek:
+    runs-on: ubuntu-latest
+    outputs:
+      siap: ${{ steps.kunci.outputs.siap }}
+    steps:
+      - id: kunci
+        env:
+          ADA_KUNCI: ${{ secrets.TTS_APP_KEY != '' && secrets.TTS_REFRESH_TOKEN != '' && secrets.GH_PAT != '' }}
+        run: |
+          echo "siap=$ADA_KUNCI" >> "$GITHUB_OUTPUT"
+          if [ "$ADA_KUNCI" != "true" ]; then echo "Kunci TikTok belum dipasang, sync dilewati."; fi
+
+  sync:
+    needs: cek
+    if: needs.cek.outputs.siap == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Ambil produk dari TikTok Shop
+        shell: pwsh
+        env:
+          TTS_APP_KEY: ${{ secrets.TTS_APP_KEY }}
+          TTS_APP_SECRET: ${{ secrets.TTS_APP_SECRET }}
+          TTS_REFRESH_TOKEN: ${{ secrets.TTS_REFRESH_TOKEN }}
+        run: ./tiktok/sync.ps1
+
+      # Tetap jalan walau sync gagal, karena token lama bisa sudah diganti TikTok.
+      - name: Simpan token terbaru
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -s "$RUNNER_TEMP/tts_refresh" ]; then
+            gh secret set TTS_REFRESH_TOKEN < "$RUNNER_TEMP/tts_refresh"
+          fi
+
+      - name: Terbitkan perubahan
+        run: |
+          git add js/produk-tiktok.js tiktok/harga.csv
+          if git diff --cached --quiet; then
+            echo "Tidak ada perubahan."
+            exit 0
+          fi
+          git config user.name "Sync TikTok"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "Sync produk TikTok"
+          git push

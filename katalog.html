@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Katalog | Grosir Tiara</title>
+  <meta name="description" content="Katalog lengkap gamis, atasan kebaya, tunik, dan atasan pendek Grosir Tiara. Bandingkan dengan harga pasaran dan pesan lewat WhatsApp.">
+  <meta name="theme-color" content="#B44446">
+  <link rel="icon" href="img/ikon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-halaman="katalog">
+  <div id="kepala"></div>
+
+  <main>
+    <section class="kepala-katalog">
+      <div class="isi">
+        <p class="label">Etalase Grosir Tiara</p>
+        <h1>Katalog</h1>
+        <p class="lede">Bandingkan harga kami dengan harga pasaran. Pilih yang kamu suka, lalu kirim pesanan ke WhatsApp.</p>
+      </div>
+    </section>
+
+    <section class="filter" aria-label="Saring produk">
+      <div class="isi filter-isi">
+        <div class="filter-chip" id="filter-kategori"></div>
+        <div class="filter-baris">
+          <div class="cari">
+            <label class="sr" for="cari">Cari produk</label>
+            <input class="kolom" id="cari" type="search" placeholder="Cari nama, model, atau bahan" autocomplete="off">
+          </div>
+          <div>
+            <label class="sr" for="filter-bahan">Bahan</label>
+            <select class="kolom" id="filter-bahan"></select>
+          </div>
+          <div>
+            <label class="sr" for="urut">Urutkan</label>
+            <select class="kolom" id="urut">
+              <option value="hemat">Paling hemat</option>
+              <option value="murah">Harga terendah</option>
+              <option value="mahal">Harga tertinggi</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bagian" style="padding-top:28px">
+      <div class="isi">
+        <p class="hasil-info" id="hasil-info" aria-live="polite"></p>
+        <div class="grid-produk" id="grid-katalog"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="kaki"></div>
+  <script src="js/data.js"></script>
+  <script src="js/produk-tiktok.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
