@@ -10,17 +10,45 @@ window.TIARA_ATUR = {
     "instagram": "",
     "email": "",
     "alamat": "",
-    "jamBuka": ""
+    "jamBuka": "Senin-Sabtu, 09.00-20.00"
   },
   "minGrosir": 6,
   "naikHargaPasar": 60,
   "modeContoh": true,
   "pengumuman": "",
   "kategori": [
-    { "id": "gamis", "nama": "Gamis", "deskripsi": "Dari model harian sampai pesta", "art": "gamis", "warna": "bata", "motif": "plisket" },
-    { "id": "kebaya", "nama": "Atasan Kebaya", "deskripsi": "Brokat dan renda siap pakai", "art": "kebaya", "warna": "marun", "motif": "renda" },
-    { "id": "tunik", "nama": "Tunik", "deskripsi": "Panjang pas, nyaman seharian", "art": "tunik", "warna": "salem", "motif": "titik" },
-    { "id": "atasan", "nama": "Atasan Pendek", "deskripsi": "Ringan untuk kerja dan santai", "art": "atasan", "warna": "abu", "motif": "polos" }
+    {
+      "id": "gamis",
+      "nama": "Gamis",
+      "deskripsi": "Dari model harian sampai pesta",
+      "art": "gamis",
+      "warna": "bata",
+      "motif": "plisket"
+    },
+    {
+      "id": "kebaya",
+      "nama": "Atasan Kebaya",
+      "deskripsi": "Brokat dan renda siap pakai",
+      "art": "kebaya",
+      "warna": "marun",
+      "motif": "renda"
+    },
+    {
+      "id": "tunik",
+      "nama": "Tunik",
+      "deskripsi": "Panjang pas, nyaman seharian",
+      "art": "tunik",
+      "warna": "salem",
+      "motif": "titik"
+    },
+    {
+      "id": "atasan",
+      "nama": "Atasan Pendek",
+      "deskripsi": "Ringan untuk kerja dan santai",
+      "art": "atasan",
+      "warna": "abu",
+      "motif": "polos"
+    }
   ],
   "testimoni": [],
   "produk": {},
