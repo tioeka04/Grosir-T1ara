@@ -185,7 +185,8 @@ input[type=range] { width: 100%; accent-color: var(--bata); height: 28px; margin
   position: relative; display: block; width: 100%; aspect-ratio: 1 / 1.2; padding: 12% 12% 6%; border: 0; border-radius: var(--radius); overflow: hidden;
 }
 .kartu-gambar svg { width: 100%; height: 100%; transform-origin: 50% 2%; transition: transform .35s ease; }
-.kartu-gambar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.kartu-gambar:has(img) { aspect-ratio: 3 / 4; }
+.kartu-gambar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .kartu:hover .kartu-gambar svg { transform: rotate(2.5deg) scale(1.03); }
 .potongan {
   position: absolute; top: 12px; left: 12px; z-index: 1; padding: 4px 11px;
@@ -308,7 +309,9 @@ dialog::backdrop { background: rgba(100, 36, 47, .6); }
 .produk-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
 .produk-gambar { position: relative; padding: 9% 10% 5%; min-height: 100%; display: flex; align-items: center; }
 .produk-gambar svg { width: 100%; max-height: 560px; }
-.produk-gambar img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+/* Foto asli tampil utuh sesuai rasionya, tetap terlihat saat teks digulir */
+.produk-gambar:has(img) { padding: 0; min-height: 0; align-self: start; position: sticky; top: 0; justify-content: center; }
+.produk-gambar img { display: block; width: 100%; height: auto; max-height: calc(100dvh - 32px); object-fit: contain; }
 .produk-teks { padding: clamp(20px, 3vw, 36px); display: grid; gap: 16px; align-content: start; }
 .produk-teks h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); padding-right: 38px; }
 .tutup {
@@ -425,6 +428,8 @@ legend span { font-weight: 600; color: var(--teks-lembut); text-transform: capit
   .produk-grid { grid-template-columns: minmax(0, 1fr); }
   .produk-gambar { min-height: 0; height: 270px; justify-content: center; padding: 22px 0 10px; }
   .produk-gambar svg { height: 100%; }
+  .produk-gambar:has(img) { height: auto; padding: 0; position: static; }
+  .produk-gambar img { width: auto; max-width: 100%; max-height: 62dvh; margin-inline: auto; }
   .aksi-produk { position: sticky; bottom: 0; background: var(--putih); padding-block: 10px; margin-bottom: -10px; }
   .dialog-daftar { width: 100vw; }
   .notif { bottom: 80px; }
